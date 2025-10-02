@@ -1,19 +1,41 @@
 import React, { useState } from 'react';
-import { UserPlus, X, Users } from 'lucide-react';
+import { UserPlus, X, Users, CheckCircle } from 'lucide-react';
 
 const FriendList = ({ friends, onAddFriend, onRemoveFriend }) => {
   const [newFriendName, setNewFriendName] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [lastAddedFriend, setLastAddedFriend] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (newFriendName.trim() && !friends.some(f => f.name.toLowerCase() === newFriendName.trim().toLowerCase())) {
+      setLastAddedFriend(newFriendName.trim());
       onAddFriend(newFriendName);
       setNewFriendName('');
+      
+      // Show success message
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
     }
   };
 
   return (
     <div className="space-y-4">
+      {/* Success Message */}
+      {showSuccess && lastAddedFriend && (
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 animate-in slide-in-from-top duration-300">
+          <div className="flex items-center gap-3">
+            <CheckCircle className="h-5 w-5 text-green-600" />
+            <div className="flex-1">
+              <p className="font-medium text-green-800">
+                <span className="font-semibold">{lastAddedFriend}</span> added successfully! ✅
+              </p>
+              <p className="text-sm text-green-700">Ready to split expenses together</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Add Friend Form */}
       <div className="bg-white rounded-lg p-4 shadow-sm border">
         <form onSubmit={handleSubmit} className="space-y-3">

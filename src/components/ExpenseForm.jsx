@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Plus, IndianRupee, Receipt } from 'lucide-react';
+import { Plus, IndianRupee, Receipt, CheckCircle } from 'lucide-react';
 
 const ExpenseForm = ({ friends, onAddExpense }) => {
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
   const [paidBy, setPaidBy] = useState('');
   const [participants, setParticipants] = useState([]);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [lastAddedExpense, setLastAddedExpense] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -21,7 +23,20 @@ const ExpenseForm = ({ friends, onAddExpense }) => {
       participants: participants.map(id => parseInt(id))
     };
 
+    // Store the expense info for success message
+    const paidByName = friends.find(f => f.id === parseInt(paidBy))?.name;
+    setLastAddedExpense({
+      description: description.trim(),
+      amount: parseFloat(amount),
+      paidByName,
+      participantCount: participants.length
+    });
+
     onAddExpense(expenseData);
+    
+    // Show success message
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 3000);
     
     // Reset form
     setDescription('');
@@ -59,8 +74,25 @@ const ExpenseForm = ({ friends, onAddExpense }) => {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border">
-      <form onSubmit={handleSubmit} className="p-4 space-y-6">
+    <div className="space-y-4">
+      {/* Success Message */}
+      {showSuccess && lastAddedExpense && (
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 animate-in slide-in-from-top duration-300">
+          <div className="flex items-start gap-3">
+            <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <h4 className="font-medium text-green-800 mb-1">Expense Added Successfully! ✅</h4>
+              <div className="text-sm text-green-700">
+                <p><span className="font-medium">{lastAddedExpense.description}</span> for ₹{lastAddedExpense.amount.toFixed(2)}</p>
+                <p>Paid by <span className="font-medium">{lastAddedExpense.paidByName}</span> • Split among {lastAddedExpense.participantCount} people</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="bg-white rounded-lg shadow-sm border">
+        <form onSubmit={handleSubmit} className="p-4 space-y-6">
         {/* Description */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -179,6 +211,7 @@ const ExpenseForm = ({ friends, onAddExpense }) => {
           Add Expense
         </button>
       </form>
+    </div>
     </div>
   );
 };

@@ -9,6 +9,7 @@ function App() {
   const [currentStep, setCurrentStep] = useState(0);
   const [friends, setFriends] = useState([]);
   const [expenses, setExpenses] = useState([]);
+  const [showExpenseSuccess, setShowExpenseSuccess] = useState(false);
 
   const steps = [
     { id: 'friends', title: 'Add Friends', icon: Users, description: 'Add people to split with' },
@@ -16,6 +17,27 @@ function App() {
     { id: 'summary', title: 'Review', icon: Calculator, description: 'Check all expenses' },
     { id: 'settlement', title: 'Settlement', icon: Calculator, description: 'See who owes what' }
   ];
+
+  const getStepDescription = () => {
+    switch (currentStep) {
+      case 0: 
+        return friends.length === 0 
+          ? 'Add people to split with' 
+          : `${friends.length} friend${friends.length !== 1 ? 's' : ''} added - Add more or continue`;
+      case 1: 
+        return expenses.length === 0 
+          ? 'Record what was spent' 
+          : `${expenses.length} expense${expenses.length !== 1 ? 's' : ''} added - Add more or continue`;
+      case 2: 
+        return expenses.length === 0 
+          ? 'No expenses to review yet' 
+          : `Review ${expenses.length} expense${expenses.length !== 1 ? 's' : ''}`;
+      case 3: 
+        return 'Final settlement calculation';
+      default: 
+        return steps[currentStep].description;
+    }
+  };
 
   const addFriend = (name) => {
     const newFriend = {
@@ -136,7 +158,7 @@ function App() {
             <StepIcon className="h-6 w-6 text-blue-600 mr-3" />
             <div>
               <h2 className="text-lg font-semibold text-gray-900">{currentStepData.title}</h2>
-              <p className="text-sm text-gray-600">{currentStepData.description}</p>
+              <p className="text-sm text-gray-600">{getStepDescription()}</p>
             </div>
           </div>
         </div>
@@ -161,6 +183,19 @@ function App() {
 
         {currentStep === 1 && (
           <div className="space-y-4">
+            {/* Progress Indicator */}
+            {expenses.length > 0 && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <div className="flex items-center gap-2">
+                  <Receipt className="h-4 w-4 text-blue-600" />
+                  <p className="text-sm text-blue-800">
+                    <span className="font-medium">{expenses.length} expense{expenses.length !== 1 ? 's' : ''} added</span>
+                    <span className="text-blue-600"> • Total: ₹{expenses.reduce((sum, exp) => sum + exp.amount, 0).toFixed(2)}</span>
+                  </p>
+                </div>
+              </div>
+            )}
+            
             <ExpenseForm 
               friends={friends} 
               onAddExpense={addExpense} 
@@ -175,6 +210,18 @@ function App() {
 
         {currentStep === 2 && (
           <div className="space-y-4">
+            {expenses.length > 0 && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <div className="flex items-start gap-2">
+                  <Calculator className="h-4 w-4 text-blue-600 mt-0.5" />
+                  <div className="text-sm text-blue-800">
+                    <p className="font-medium">Review your expenses</p>
+                    <p className="text-blue-700">Check if everything looks correct, then proceed to calculate the settlement!</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             <ExpenseList 
               expenses={expenses} 
               friends={friends} 
