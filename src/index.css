@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Mobile-first responsive design */
+@layer base {
+  body {
+    @apply bg-gray-50 min-h-screen text-gray-900 antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  * {
+    @apply box-border;
+  }
+}
+
+@layer components {
+  /* Interactive elements with better touch targets */
+  .btn {
+    @apply font-medium py-3 px-4 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+
+  .btn-primary {
+    @apply btn bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white focus:ring-blue-500;
+  }
+
+  .btn-secondary {
+    @apply btn bg-gray-500 hover:bg-gray-600 active:bg-gray-700 text-white focus:ring-gray-500;
+  }
+
+  .btn-danger {
+    @apply btn bg-red-500 hover:bg-red-600 active:bg-red-700 text-white focus:ring-red-500;
+  }
+
+  /* Form inputs optimized for mobile */
+  .input-field {
+    @apply w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base;
+  }
+
+  .select-field {
+    @apply input-field bg-white appearance-none cursor-pointer;
+  }
+
+  /* Cards with better mobile spacing */
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden;
+  }
+
+  /* Better touch targets for mobile */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
+  }
+
+  /* Smooth animations */
+  .animate-scale {
+    @apply transition-transform duration-150 ease-out active:scale-95;
+  }
+}
+
+/* Prevent zoom on input focus in iOS */
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+  font-size: 16px;
+}
+
+/* Ensure good contrast and readability */
+@media (max-width: 768px) {
+  .text-sm {
+    @apply text-base;
+  }
+}
