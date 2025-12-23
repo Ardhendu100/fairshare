@@ -20,8 +20,7 @@ const BalanceSheet = ({ friends, expenses, onReset }) => {
 
     // Calculate what each person paid and owes
     expenses.forEach(expense => {
-      const { amount, paidBy, participants } = expense;
-      const sharePerPerson = amount / participants.length;
+      const { amount, paidBy, participants, splitMode, customSplits } = expense;
 
       // Add to what the payer paid
       if (balances[paidBy]) {
@@ -29,11 +28,22 @@ const BalanceSheet = ({ friends, expenses, onReset }) => {
       }
 
       // Add to what each participant owes
-      participants.forEach(participantId => {
-        if (balances[participantId]) {
-          balances[participantId].owes += sharePerPerson;
-        }
-      });
+      if (splitMode === 'custom' && customSplits) {
+        // Use custom split amounts
+        participants.forEach(participantId => {
+          if (balances[participantId] && customSplits[participantId]) {
+            balances[participantId].owes += parseFloat(customSplits[participantId]);
+          }
+        });
+      } else {
+        // Equal split
+        const sharePerPerson = amount / participants.length;
+        participants.forEach(participantId => {
+          if (balances[participantId]) {
+            balances[participantId].owes += sharePerPerson;
+          }
+        });
+      }
     });
 
     // Calculate net balance for each person

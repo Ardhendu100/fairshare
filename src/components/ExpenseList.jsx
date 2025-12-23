@@ -90,7 +90,11 @@ const ExpenseList = ({ expenses, friends, onRemoveExpense }) => {
                 <div className="flex items-center gap-2 mb-2">
                   <Users className="h-4 w-4 text-gray-500" />
                   <span className="text-sm font-medium text-gray-700">
-                    Split among {expense.participants.length} • ₹{(expense.amount / expense.participants.length).toFixed(2)} each
+                    {expense.splitMode === 'custom' ? (
+                      <>Custom split • {expense.participants.length} people</>
+                    ) : (
+                      <>Split among {expense.participants.length} • ₹{(expense.amount / expense.participants.length).toFixed(2)} each</>
+                    )}
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -106,6 +110,11 @@ const ExpenseList = ({ expenses, friends, onRemoveExpense }) => {
                       </div>
                       <span className="text-xs font-medium text-gray-700">
                         {getFriendName(participantId)}
+                        {expense.splitMode === 'custom' && expense.customSplits && (
+                          <span className="text-blue-600 ml-1">
+                            ₹{parseFloat(expense.customSplits[participantId] || 0).toFixed(2)}
+                          </span>
+                        )}
                       </span>
                     </div>
                   ))}
